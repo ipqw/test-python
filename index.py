@@ -1,6 +1,6 @@
 from langchain_core.tools import tool
 from langchain_openai import ChatOpenAI
-from langgraph.prebuilt import create_react_agent
+from langchain.agents import create_agent
 
 from db.database import create_tables, get_session
 from db import crud
@@ -62,7 +62,11 @@ def post_stats() -> str:
 tools = [add_user, find_user, add_post, get_user_posts, find_posts_by_tag, post_stats]
 
 model = ChatOpenAI(model="gpt-4o-mini")
-agent = create_react_agent(model, tools, prompt="You are a database assistant. Use tools to manage users and posts.")
+agent = create_agent(
+    model,
+    tools,
+    system_prompt="You are a database assistant. Use tools to manage users and posts.",
+)
 
 result = agent.invoke({
     "messages": [{
